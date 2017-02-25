@@ -1,0 +1,174 @@
+1.
+git clone https://github.com/Aerospace-Software/Reed
+
+cd /home/dylan/Reed
+
+mkdir Assignments
+
+cd Assignments
+
+mkdir Assignment_1
+
+mkdir Assignment_2
+
+mkdir Assignment_3
+
+mkdir Assignment_4
+
+cd Assignment_1
+
+mkdir Submission
+
+cd -
+
+cd Assignment_2
+
+mkdir Part_1
+
+mkdir Part_2
+
+cd Part_1
+
+mkdir Submission
+
+cd - 
+
+cd Part_2
+
+mkdir Submission
+
+cd
+
+cd /home/dylan/Reed/Assignments/Assignment_3
+
+mkdir Submission
+
+cd 
+
+cd /home/dylan/Reed/Assignments/Assignment_4
+
+mkdir Part_2
+
+mkdir Part_3
+
+cd Part _2
+
+mkdir Submission
+
+cd -
+
+cd Part_3
+
+mkdir Submission
+
+I then downloaded the submssions from previous assingments to downloads on my computer.
+cd /home/dylan/Downloads
+mv assignment1.zip /home/dylan/Reed/Assignments/Assigment_1/Submission
+mv assignment2.zip /home/dylan/Reed/Assignments/Assignment_2/Part_1/Submission
+mv assignement24057.pdf /home/dylan/Reed/Assignments/Assignment_2/Part_2/Submission/
+mv assignment3.zip /home/dylan/Reed/Assignments/Assigment_3/Submission
+
+cd /home/dylan/Reed
+
+git init
+
+git add . 
+git commit -m "First commit"
+[master 63b2d1b] Part 3 completed
+ 3 files changed, 13 insertions(+)
+ create mode 100644 Assignments/Assignment_2/Part_1/Submission/assignment2.zip
+ create mode 100644 Assignments/Assignment_2/Part_2/Submission/assignement24057.pdf
+git push
+
+
+part 2
+I was group member #2 
+git clone https://github.com/Aerospace-Software/Bui
+git checkout Current_Assignment
+cd /home/dylan/Bui/Assignments/Assignment_4/Part_3/Submission
+nano README.md
+cd /home/dylan/Bui
+git init 
+git add . 
+git commit -m "Adding Second Line"
+\[Current_Assignment f03a300] Adding Second Line
+ 1 file changed, 1 insertion(+)
+git push
+Username for 'https://github.com': dyre1764
+Password for 'https://dyre1764@github.com': 
+Counting objects: 7, done.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (7/7), 534 bytes | 0 bytes/s, done.
+Total 7 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To https://github.com/Aerospace-Software/Bui
+   7319718..f03a300  Current_Assignment -> Current_Assignment
+git pull 
+Username for 'https://github.com': dyre1764	
+Password for 'https://dyre1764@github.com': 
+remote: Counting objects: 14, done.
+remote: Compressing objects: 100% (5/5), done.
+remote: Total 14 (delta 3), reused 14 (delta 3), pack-reused 0
+Unpacking objects: 100% (14/14), done.
+From https://github.com/Aerospace-Software/Bui
+   f03a300..4f3edaa  Current_Assignment -> origin/Current_Assignment
+Updating f03a300..4f3edaa
+Fast-forward
+ Assignments/Assignment_4/Part_3/Submission/README.md | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+
+dylan@dylan-VirtualBox:~/Bui$ git merge Current_Assignment 
+Updating 919e30a..4f3edaa
+Fast-forward
+ Assignments/Assignment_4/Part_3/Submission/README.md | 5 +++++
+ 1 file changed, 5 insertions(+)
+ create mode 100644 Assignments/Assignment_4/Part_3/Submission/README.md
+
+dylan@dylan-VirtualBox:~/Bui$ git push origin master
+Username for 'https://github.com': dyre1764	
+Password for 'https://dyre1764@github.com': 
+Total 0 (delta 0), reused 0 (delta 0)
+To https://github.com/Aerospace-Software/Bui
+   919e30a..4f3edaa  master -> master
+
+cd
+
+git clone https://github.com/Aerospace-Software/SharedCloning into 'Shared'...
+Username for 'https://github.com': dyre1764	 
+Password for 'https://dyre1764@github.com': 
+remote: Counting objects: 38, done.
+remote: Compressing objects: 100% (26/26), done.
+remote: Total 38 (delta 7), reused 0 (delta 0), pack-reused 6
+Unpacking objects: 100% (38/38), done.
+Checking connectivity... done.
+
+cd /home/dylan/Shared/
+nano README.md 
+git pull
+Username for 'https://github.com': dyre1764	
+Password for 'https://dyre1764@github.com': 
+Already up-to-date.
+git add . 
+git commit -m "Reed edited README.md"
+[master 83ab232] Reed edited README.md
+ 1 file changed, 1 insertion(+)
+git push
+Username for 'https://github.com': dyre1764	          
+Password for 'https://dyre1764@github.com': 
+Counting objects: 3, done.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 374 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local objects.
+To https://github.com/Aerospace-Software/Shared
+   60e9477..83ab232  master -> master
+
+
+
+
+
+
+
