@@ -78,13 +78,13 @@ int main(int argc, char *argv[]){
   int er;
   //Choose objective 
     if(objective == 1){
-	    printf("yo\n");
 	    outfile1 = fopen("outfile1","w");
 	    delV_min = delVmin_opt(y0, y,clearance,accuracy, outfile1, rE);
 	    fclose(outfile1);
 	    y0[4] += delV_min[0];
   	    y0[5] += delV_min[1];
             er = integrator(y0, outfile, clearance, 1);
+	    free(delV_min);
     }
     else if(objective == 2){
 	    outfile2 = fopen("outfile2","w");
@@ -93,6 +93,7 @@ int main(int argc, char *argv[]){
 	    y0[4] += delV_min[0];
   	    y0[5] += delV_min[1];
 	    er = integrator(y0, outfile, clearance, 1);
+	    free(delV_min);
     }
 free(name);
 free(file);
@@ -318,7 +319,7 @@ double * delVmin_opt(double *y0, struct y_type y,double clearance,double accurac
     int cond=0; //We dont want integrator to put anything in text file
     int er;
     double delVx,delVy,delV_mag,delVx_temp,delVy_temp;
-    double delV_temp=3000;
+    double delV_temp=100;
     double * yte = malloc(sizeof(double)*8);
     yte[0] = y0[0];
     yte[1] = y0[1];
@@ -334,7 +335,7 @@ double * delVmin_opt(double *y0, struct y_type y,double clearance,double accurac
             er = integrator(yte, outfile1, clearance, cond);// calculate trajectpory
             if(er == 2){ //discard if not returned to earth
                 delV_mag = sqrt(pow(delVx,2) + pow(delVy,2)); //calculate magnitude of delta v
-                if (delV_mag <= delV_temp){//if delta V is smaller than guess, set guess to the delta V
+                if (delV_mag <= delV_temp && ){//if delta V is smaller than guess, set guess to the delta V
                     delV_temp = delV_mag;
                     delVx_temp = delVx;
 		    delVy_temp = delVy;
