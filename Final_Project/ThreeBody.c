@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
     y0[5] = 766.0444;
     y0[6] = -683.7457;
     y0[7] = 746.1774;
-    //Set up for optimizer and choose objective
+    //Set up for optimizer and
     double * delV_min;
     int er;
     int cond = 1; //We want integrator to write optimum data to a file
@@ -77,14 +77,10 @@ int main(int argc, char *argv[]){
 
     printf("Using %d processes\n",size);
 
-    // Need to update delVmin and time_opt header files to reflect them taking in
-    // 'int rank' as a variable to use in the parallel processes.
-    // Need to manage command line inputs such that argv and argc correctly reflect
-    // input values for number of processes
-    //
-
+    //choose objective
     if(objective == 1){
         delV_min = delVmin_opt(y0, y,clearance,accuracy, outfile, rank, size);
+        MPI_Finalize();
         y0[4] += delV_min[0];
         y0[5] += delV_min[1];
         er = integrator(y0, outfile, clearance, cond);
@@ -92,6 +88,7 @@ int main(int argc, char *argv[]){
     }
     else if(objective == 2){
         delV_min = delVtime_opt(y0, y,clearance,accuracy, outfile);
+        MPI_Finalize();
         y0[4] += delV_min[0];
         y0[5] += delV_min[1];
         er = integrator(y0, outfile, clearance, cond);
@@ -118,66 +115,57 @@ double * delVmin_opt(double *y0, struct y_type y,double clearance,double accurac
     yte[6] = y0[6];
     yte[7] = y0[7];
     //setup parallelization
-    int increment = 200/(size*sqrt(2)); // This is necessary to properly step between processes. For 2 processes, increment = 100/sqrt(2). For 4, = 50/sqrt(2)
-    int startValx = -100/sqrt(2) + rank*increment; // This covers the -100 to 0 case, assigning those values to process 0
-    int startValy = startValx;
-    int endValx, endValy;
+    double increment = 200.0/size/sqrt(2.0); // This is necessary to properly step between processes. For 2 processes, increment = 100/sqrt(2). For 4, = 50/sqrt(2)
+    double startValx = -100.0/sqrt(2.0) + rank*increment - accuracy; // This covers the -100 to 0 case, assigning those values to process 0
+    double endValx;
     if (rank != (size-1)){
-        endValx = -100/sqrt(2) + (rank + 1)*increment; // Creates a mesh of 'increment' size throughout the processes. This is valid for processes not equal to the final process.
+        endValx = -100.0/sqrt(2.0) + (rank + 1)*increment + accuracy; // Creates a mesh of 'increment' size throughout the processes. This is valid for processes not equal to the final process.
     }
     else{
-        endValx = 100/sqrt(2); // For the singular case in which rank == size-1 (we're at the last process), endVal is equal to the maximum range value.
+        endValx = 100.0/sqrt(2.0); // For the singular case in which rank == size-1 (we're at the last process), endVal is equal to the maximum range value.
     }
-    endValy = endValx;
+    double startValy = -100.0/sqrt(2.0);
+    double endValy = 100.0/sqrt(2.0);
     // I think I want to write a for loop over startVal to endVal which will properly take care of parallelizing the code
     for (startValx; startValx < endValx; startValx += accuracy){
-        yte[4] = y0[4] + delVx;
-        for (startValy; startValy < endValy; startValy += accuracy){
-            yte[5] = y0[5] + delVy;
+        yte[4] = y0[4] + startValx;
+        for (startValy; startValy <= endValy; startValy += accuracy){
+            yte[5] = y0[5] + startValy;
             er = integrator(yte,outfile, clearance, cond);
             if (er == 2){
-                delV_mag = sqrt(pow(delVx,2) + pow(delVy,2));
+                delV_mag = sqrt(pow(startValx,2) + pow(startValy,2));
                 if (delV_mag <= delV_temp){
                     delV_temp = delV_mag;
-                    delVx_temp = delVx;
-                    delVy_temp = delVy;
+                    delVx_temp = startValx;
+                    delVy_temp = startValy;
                 }
             }
         }
     }
-    MPI_Comm comm;
-    //double root, *xBuff, *yBuff,*magBuff;
-    double root, xBuff[100], yBuff[100],magBuff[100];
+    double root, xBuff[size], yBuff[size],magBuff[size];
     root = 0;
-    //xBuff = malloc(sizeof(double)*size); // Create an array that'll hold the calcualted dV's from each process
-    //yBuff = malloc(sizeof(double)*size);
-    //magBuff = malloc(sizeof(double)*size);
     //Need to do three gathers to get x and y and magnitude values
     MPI_Gather(&delVx_temp, 1, MPI_DOUBLE, &xBuff, 1, MPI_DOUBLE, root, MPI_COMM_WORLD);
     MPI_Gather(&delVy_temp, 1, MPI_DOUBLE, &yBuff, 1, MPI_DOUBLE, root, MPI_COMM_WORLD);
     MPI_Gather(&delV_temp, 1, MPI_DOUBLE, &magBuff, 1, MPI_DOUBLE, root, MPI_COMM_WORLD);
-    //return deltaV
     if(rank == 0){
         int i;
-        for (i=1;i<size;i++){
+        for (i=0;i<size;i++){
             if (magBuff[i] < delV_temp){
                 delV_temp = magBuff[i];
                 delVx_temp = xBuff[i];
                 delVy_temp = yBuff[i];
             }
         }
+        //print result to file
+        FILE * outfile1;
+        outfile1 = fopen("Vmin", "w");
+        fprintf(outfile1,"Minimum change in velocity to get to Earth is %.4f [m/s]\n", delV_temp);
+        fprintf(outfile1,"[ %.4f, %.4f] m/s\n",delVx_temp,delVy_temp);
     }
-
     double *delV = malloc(sizeof(double)*2);
     delV[0] = delVx_temp;
     delV[1] = delVy_temp;
-    printf("rank: %d\n", rank);
-    MPI_Finalize();
-    //print result to file
-    FILE * outfile1;
-    outfile1 = fopen("Vmin", "w");
-    fprintf(outfile1,"Minimum change in velocity to get to Earth is %.4f [m/s]\n", delV_temp);
-    fprintf(outfile1,"[ %.4f, %.4f] m/s\n",delVx_temp,delVy_temp);
     free(yte);
     return delV;
 }
