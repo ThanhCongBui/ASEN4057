@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 //STRUCTS
 struct dydt_type{
     double xs_dot;
@@ -38,6 +39,9 @@ void myrename(char *name);
 
 int main(int argc, char *argv[]){
     //Take out arguments
+    clock_t begin, end;
+    double time_spent;
+    begin = clock();
     int objective = atoi(argv[1]);
     double clearance = atof(argv[2]);
     double accuracy = atof(argv[3]);
@@ -84,6 +88,9 @@ int main(int argc, char *argv[]){
     free(file);
     fclose(outfile);
     free(y0);
+    end = clock();
+    time_spent = (double) (end - begin)/CLOCKS_PER_SEC;
+    printf("Time spent : %lf\n", time_spent);
     return 0;
 }
 

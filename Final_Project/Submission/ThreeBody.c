@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mpi.h>
+#include <time.h>
 
 //STRUCTS
 struct dydt_type{
@@ -40,6 +41,7 @@ void myrename(char *name);
 
 int main(int argc, char *argv[]){
     //Take out arguments
+  clock_t timestart = clock();
     int objective = atoi(argv[1]);
     double clearance = atof(argv[2]);
     double accuracy = atof(argv[3]);
@@ -76,7 +78,7 @@ int main(int argc, char *argv[]){
     MPI_Comm_size(MPI_COMM_WORLD,&size);
 
     printf("Using %d processes\n",size);
-
+    
     //choose objective
     if(objective == 1){
         delV_min = delVmin_opt(y0, y,clearance,accuracy, outfile, rank, size);
@@ -84,8 +86,13 @@ int main(int argc, char *argv[]){
         y0[4] += delV_min[0];
         y0[5] += delV_min[1];
         er = integrator(y0, outfile, clearance, cond);
+	printf("\n \n");
+	printf("Vx = %lf \n", delV_min[0]);
+	printf("Vy = %lf \n", delV_min[1]);
+	
         free(delV_min);
     }
+    
     else if(objective == 2){
         delV_min = delVtime_opt(y0, y,clearance,accuracy, outfile);
         MPI_Finalize();
@@ -94,11 +101,15 @@ int main(int argc, char *argv[]){
         er = integrator(y0, outfile, clearance, cond);
         free(delV_min);
     }
+   
     //Clean up
     free(name);
     free(file);
     fclose(outfile);
     free(y0);
+    clock_t timeend = clock();
+    double code_time =(double) (timeend-timestart)/CLOCKS_PER_SEC;
+    printf("Code Time is %lf\n \n", code_time);
     return 0;
 }
 

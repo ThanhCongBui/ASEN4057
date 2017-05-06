@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
 //STRUCTS
 struct dydt_type{
     double xs_dot;
@@ -38,6 +40,7 @@ char * myrename(char *name);
 //---------------------------------MAIN--------------------------------------------
 int main(int argc, char *argv[]){
   //Take out arguments
+  clock_t timestart = clock();
   int cond = 1; //We want integrator to write data to a file
   int objective = atoi(argv[1]);
   double clearance = atof(argv[2]);
@@ -93,10 +96,16 @@ int main(int argc, char *argv[]){
 	    er = integrator(y0, outfile, clearance, 1);
 	    free(delV_min);
     }
+
+
+    
 free(name);
 free(file);
 fclose(outfile);
 free(y0);
+ clock_t timeend = clock();
+ double code_time = (double) (timeend - timestart)/CLOCKS_PER_SEC;
+ printf("Code Time is %lf \n \n", code_time);
 return 0;
 }
 //---------------------------------END OF MAIN--------------------------------------------
